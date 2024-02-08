@@ -1,784 +1,517 @@
-/**
- * Servo labels
- */
-enum SBServo {
-    //% block="A"
-    ServoA = 0,
-    //% block="B"
-    ServoB = 1,
-    //% block="C"
-    ServoC = 2
+
+interface IActionVector {
+    _key: state
+    _oldkey: state
+    _action: Action
 }
 
-/**
-* RGB LED labels
-*/
-enum SBRgbLed {
-    //% block="A"
-    RgbLedA = 0,
-    //% block="B"
-    RgbLedB = 1
+
+enum state {
+    state1 = 0x10,
+    state2 = 0x11,
+    state3 = 0x20,
+    state4 = 0x21
 }
 
-/**
- * Color labels
- */
-enum SBColor {
-    //% block="red"
-    Red = 0xff0000,
-    //% block="orange"
-    Orange = 0xffa500,
-    //% block="yellow"
-    Yellow = 0xffff00,
-    //% block="green"
-    Green = 0x00ff00,
-    //% block="blue"
-    Blue = 0x0000ff,
-    //% block="indigo"
-    Indigo = 0x4b0082,
-    //% block="violet"
-    Violet = 0x8a2be2,
-    //% block="purple"
-    Purple = 0xff00ff,
-    //% block="white"
-    White = 0xffffff,
-    //% block=black
-    Black = 0x000000
+enum GroundSensorDetected {
+    //% block="none"
+    None = 0,
+    //% block="right"
+    Right = 1,
+    //% block="left"
+    Left = 2,
+    //% block="left and right"
+    Both = 3,
 }
 
-/**
- * Wave type labels
- */
-enum SBWaveType {
-    //% block="sine"
-    Sine = 0,
-    //% block="cosine"
-    Cosine = 1,
-    //% block="triangular"
-    Triangular = 2,
-    //% block="ramp up"
-    RampUp = 3,
-    //% block="ramp down"
-    RampDown = 4,
-    //% block="square"
-    Square = 5,
-    //% block="pulse"
-    Pulse = 6
-}
+enum IrRemoteButton {
+    PowerOff = 0,
+    Up = 1,
+    PowerOn = 2,
+    Left = 4,
+    Center = 5,
+    Right = 6,
+    Back = 8,
+    Down = 9,
+    Next = 10,
+    Plus = 12,
+    Zero = 13,
+    Minus = 14,
+    One = 16,
+    Two = 17,
+    Three = 18,
+    Four = 20,
+    Five = 21,
+    Six = 22,
+    Seven = 24,
+    Eight = 25,
+    Nine = 26
+};
 
 /**
- * Easing labels
+ * GameBot
  */
-enum SBEasing {
-    //% block="linear"
-    Linear = 0,
-    //% block="sine in"
-    SineIn = 1,
-    //% block="sine out"
-    SineOut = 2,
-    //% block="sine in out"
-    SineInOut = 3,
-    //% block="quad in"
-    QuadIn = 4,
-    //% block="quad out"
-    QuadOut = 5,
-    //% block="quad in out"
-    QuadInOut = 6,
-    //% block="cubic in"
-    CubicIn = 7,
-    //% block="cubic out"
-    CubicOut = 8,
-    //% block="cubic in out"
-    CubicInOut = 9,
-    //% block="quart in"
-    QuartIn = 10,
-    //% block="quart out"
-    QuartOut = 11,
-    //% block="quart in out"
-    QuartInOut = 12,
-    //% block="quint in"
-    QuintIn = 13,
-    //% block="quint out"
-    QuintOut = 14,
-    //% block="quint int out"
-    QuintInOut = 15,
-    //% block="expo in"
-    ExpoIn = 16,
-    //% block="expo out"
-    ExpoOut = 17,
-    //% block="expo in out"
-    ExpoInOut = 18,
-    //% block="circ in"
-    CircIn = 19,
-    //% block="circ out"
-    CircOut = 20,
-    //% block="circ in out"
-    CircInOut = 21,
-    //% block="back in"
-    BackIn = 22,
-    //% block="back out"
-    BackOut = 23,
-    //% block="back in out"
-    BackInOut = 24,
-    //% block="elastic in"
-    ElasticIn = 25,
-    //% block="elastic out"
-    ElasticOut = 26,
-    //% block="elastic in out"
-    ElasticInOut = 27,
-    //% block="bounce in"
-    BounceIn = 28,
-    //% block="bounce out"
-    BounceOut = 29,
-    //% block="bounce in out"
-    BounceInOut = 30
-}
+//% block="BrainBot"
+//% weight=70 icon="\uf1b9" color=#EC7505
+//% groups='["Wheels", "Lights", "Sound", "Sensors", "Receiver"]'
+namespace brainbot {
+    export enum TurnDirection {
+        //% blockId="patrolLeft" block="left"
+        Left = 0x10,
+        //% blockId="patrolRight" block="right"
+        Right = 0x20,
+    }
 
-/**
- * Strawbees Robotic Inventions
- */
-//% block="Strawbees"
-//% weight=100 color="#f443b0" icon="\u24C8" blockGap=8
-namespace sb {
-    ////////////////////////////////////////////////////////////////////////////
-    // Servos
-    ////////////////////////////////////////////////////////////////////////////
-    class ServoSB extends servos.Servo {
-        private _analogPin: AnalogPin;
-        private _digitalPin: DigitalPin;
-        private _pulse: number;
-        private _position: number;
-        private _speed: number;
-        constructor(analogPin: AnalogPin, digitalPin: DigitalPin) {
-            super();
-            this._analogPin = analogPin;
-            this._digitalPin = digitalPin;
+    export enum MoveDirection {
+        //% blockId="patrolLeft" block="forward"
+        Forward = 0x10,
+        //% blockId="patrolRight" block="back"
+        Back = 0x20,
+    }
+
+    export enum Voltage {
+        //%block="found"
+        High = 0x01,
+        //% block="lost"
+        Low = 0x00
+    }
+
+    let init_ir: boolean = false
+    let groundSensorCallback: IActionVector[] = []
+
+    let taillightLeftcolor: number;
+    let taillightRightColor: number;
+
+    /**
+     * Move forward or backward
+     */
+    //% blockId=brainbot_move block="Move %movedirection speed %speed"
+    //% speed.min=0 speed.max=100 speed.defl=50
+    //% group="Wheels"
+    //% weight=99
+    export function Move(movedirection: MoveDirection, speed: number): void {
+
+        if (movedirection == MoveDirection.Forward)
+            MoveCustom(speed, speed);
+        else
+            MoveCustom(speed * -1, speed * -1);
+    }
+
+    /**
+     * Turn left or right
+     */
+    //% blockId=brainbot_Turn block="Turn %turndirection speed %speed"
+    //% speed.min=-100 speed.max=100 speed.defl=50
+    //% group="Wheels"
+    //% weight=98
+    export function Turn(turndirection: TurnDirection, speed: number): void {
+
+        if (turndirection == TurnDirection.Left)
+            MoveCustom(0, speed);
+        else
+            MoveCustom(speed, 0);
+    }
+
+    /**
+     * Spin left or right
+     */
+    //% blockId=brainbot_Spin block="Spin %turndirection speed %speed"
+    //% speed.min=-100 speed.max=100 speed.defl=50
+    //% group="Wheels"
+    //% weight=97
+    export function Spin(turndirection: TurnDirection, speed: number): void {
+
+        if (turndirection == TurnDirection.Left)
+            MoveCustom(speed * -1, speed);
+        else
+            MoveCustom(speed, speed * -1);
+    }
+
+    /**
+     * Move
+     */
+    //% blockId=brainbot_movecustom block="Move left speed %leftspeed right speed %rightspeed"
+    //% leftspeed.min=-100 leftspeed.max=100 leftspeed.defl=50
+    //% rightspeed.min=-100 rightspeed.max=100 rightspeed.defl=50
+    //% group="Wheels"
+    //% weight=96
+    export function MoveCustom(leftspeed: number, rightspeed: number): void {
+        let deviceAddress = 0x1;
+
+
+        let left = Math.map(leftspeed, -100, 100, -255, 255);
+        let right = Math.map(rightspeed, -100, 100, -255, 255);
+        let data: number[] = []
+
+        data = [0x2, 0, 0, 0, 0];
+
+        if (left > 0) {
+            data[1] = left;
+            data[2] = 0x00;
         }
-        pulse(): number {
-            return this._pulse;
+        else {
+            left *= -1
+            data[1] = 0;
+            data[2] = left;
         }
-        position(): number {
-            return this._position;
+
+        if (right > 0) {
+            data[3] = right;
+            data[4] = 0x00;
         }
-        speed(): number {
-            return this._speed;
+        else {
+            right *= -1
+            data[3] = 0;
+            data[4] = right;
         }
-        setPosition(position: number): void {
-            this._position = position
-            // just for simulator
-            this.setAngle((this._position / 100) * 180);
-            // specific for our hardware
-            this.setPulse(600 + (this._position / 100) * 1400);
-        }
-        setSpeed(speed: number): void {
-            this._speed = speed
-            // just for simulator
-            this.setAngle(((this._speed + 100) / 200) * 180);
-            // specific for our hardware
-            let pulse
-            if (this._speed < 0) {
-                pulse = 1300 - 125 + (this._speed / 100) * 375;
-            } else {
-                pulse = 1300 + 125 + (this._speed / 100) * 375;
-            }
-            this.setPulse(pulse);
-        }
-        protected internalSetAngle(angle: number): number {
-            pins.servoWritePin(this._analogPin, angle);
-            return angle;
-        }
-        protected internalSetPulse(micros: number): void {
-            this._pulse = micros;
-            pins.servoSetPulse(this._analogPin, micros);
-        }
-        protected internalStop() {
-            pins.digitalReadPin(this._digitalPin);
-            pins.setPull(this._digitalPin, PinPullMode.PullNone);
+
+
+        for (let i = 0; i < 5; i++) {
+            pins.i2cWriteNumber(
+                deviceAddress,
+                data[i],
+                NumberFormat.Int8LE,
+                i < 4 ? true : false
+            );
         }
     }
 
-    let _servoA = new ServoSB(AnalogPin.P13, DigitalPin.P13);
-    pins.servoWritePin(AnalogPin.P13, 90); // just to trigger the simulator
-    _servoA.setPosition(50);
-    _servoA.setSpeed(0);
-    _servoA.setPulse(1300);
-    let _servoB = new ServoSB(AnalogPin.P14, DigitalPin.P14);
-    pins.servoWritePin(AnalogPin.P14, 90); // just to trigger the simulator
-    _servoB.setPosition(50);
-    _servoB.setSpeed(0);
-    _servoB.setPulse(1300);
-    let _servoC = new ServoSB(AnalogPin.P12, DigitalPin.P12);
-    pins.servoWritePin(AnalogPin.P12, 90); // just to trigger the simulator
-    _servoC.setPosition(50);
-    _servoC.setSpeed(0);
-    _servoC.setPulse(1300);
+    //% blockId=brainbot_stop block="Stop"
+    //% group="Wheels"
+    //% weight=95
+    export function Stop(): void {
+        let deviceAddress = 0x1;
+        let data: number[] = [0x2, 0, 0, 0, 0]
 
-    /**
-     * Access a servo instace.
-     * @param id the id of the servo. eg. SBServo.ServoA
-     */
-    function servoInstance(servo: number): ServoSB {
-        switch (servo) {
-            case SBServo.ServoA:
-                return _servoA;
-            case SBServo.ServoB:
-                return _servoB;
-            case SBServo.ServoC:
-                return _servoC;
+        for (let i = 0; i < 5; i++) {
+            pins.i2cWriteNumber(
+                deviceAddress,
+                data[i],
+                NumberFormat.Int8LE,
+                i < 4 ? true : false
+            );
         }
-        return null;
-    }
-    /**
-     * Sets the position of a servo by specifying a value ranging from `0%` to
-     * `100%`.
-     * @param servo Which servo to set the position to.
-     * @param position The position ranging from `0%` to `100%`.
-     */
-    //% group="Movement"
-    //% blockId=sb_setServoPosition
-    //% block="set servo %servo position to %position\\%"
-    //% servo.shadow=sb_servo
-    //% position.min=0 position.max=100 position.defl=50
-    //% duration.defl=0
-    //% inlineInputMode=inline
-    //% parts=microservo trackArgs=0
-    export function setServoPosition(servo: number, position: number): void {
-        position = Math.constrain(position, 0, 100);
-        servoInstance(servo).setPosition(position);
+
     }
 
-    /**
-     * Transtions the position of a servo over a duration of time (in seconds).
-     * The "shape" of the transition is specified by choosing one of the easing
-     * functions by name.
-     * @param servo Which servo to set the position to.
-     * @param position The position ranging from `0%` to `100%`.
-     * @param duration The duration of the transition, in seconds.
-     * @param easing The "shape" of the transition.
-     */
-    //% group="Movement"
-    //% blockId=sb_transitionServoPosition
-    //% block="transition servo %servo position to %position\\% over %duration seconds %easing"
-    //% servo.shadow=sb_servo
-    //% position.min=0 position.max=100 position.defl=100
-    //% duration.min=0 duration.defl=1
-    //% easing.shadow=sb_easing
-    //% inlineInputMode=inline
-    //% parts=microservo trackArgs=0
-    export function transitionServoPosition(servo: number, position: number, duration: number, easing: number): void {
-        position = Math.constrain(position, 0, 100);
-        duration *= 1000; // convert to ms
-        if (duration < 15) {
-            servoInstance(servo).setPosition(position);
-            return;
+
+    //% blockId=brainbot_beep block="Beep"
+    //% group="Sound"
+    export function Beep(): void {
+        pins.P0.analogWrite(512)
+        pins.P0.analogSetPeriod(1000)
+        pause(100);
+        pins.P0.analogWrite(0)
+    }
+
+    //% blockId=brainbot_sound block="set sound %on=toggleOnOff"
+    //% group="Sound"
+    export function Sound(on: boolean): void {
+        if (on) {
+            pins.P0.analogWrite(512)
+            pins.P0.analogSetPeriod(1000)
         }
-        let dt = 15;
-        let currentPostition = servoInstance(servo).position();
-        let change = position - currentPostition;
-        let start = input.runningTime();
-        let elapsed = 0;
-        while (elapsed < duration) {
-            let targetPosition;
-            switch (easing) {
-                case SBEasing.SineIn: targetPosition = easeSineIn(elapsed, currentPostition, change, duration); break;
-                case SBEasing.SineOut: targetPosition = easeSineOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.SineInOut: targetPosition = easeSineInOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.QuadIn: targetPosition = easeQuadIn(elapsed, currentPostition, change, duration); break;
-                case SBEasing.QuadOut: targetPosition = easeQuadOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.QuadInOut: targetPosition = easeQuadInOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.CubicIn: targetPosition = easeCubicIn(elapsed, currentPostition, change, duration); break;
-                case SBEasing.CubicOut: targetPosition = easeCubicOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.CubicInOut: targetPosition = easeCubicInOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.QuartIn: targetPosition = easeQuartIn(elapsed, currentPostition, change, duration); break;
-                case SBEasing.QuartOut: targetPosition = easeQuartOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.QuartInOut: targetPosition = easeQuartInOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.QuintIn: targetPosition = easeQuintIn(elapsed, currentPostition, change, duration); break;
-                case SBEasing.QuintOut: targetPosition = easeQuintOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.QuintInOut: targetPosition = easeQuintInOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.ExpoIn: targetPosition = easeExpoIn(elapsed, currentPostition, change, duration); break;
-                case SBEasing.ExpoOut: targetPosition = easeExpoOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.ExpoInOut: targetPosition = easeExpoInOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.CircIn: targetPosition = easeCircIn(elapsed, currentPostition, change, duration); break;
-                case SBEasing.CircOut: targetPosition = easeCircOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.CircInOut: targetPosition = easeCircInOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.BackIn: targetPosition = easeBackIn(elapsed, currentPostition, change, duration); break;
-                case SBEasing.BackOut: targetPosition = easeBackOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.BackInOut: targetPosition = easeBackInOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.ElasticIn: targetPosition = easeElasticIn(elapsed, currentPostition, change, duration); break;
-                case SBEasing.ElasticOut: targetPosition = easeElasticOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.ElasticInOut: targetPosition = easeElasticInOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.BounceIn: targetPosition = easeBounceIn(elapsed, currentPostition, change, duration); break;
-                case SBEasing.BounceOut: targetPosition = easeBounceOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.BounceInOut: targetPosition = easeBounceInOut(elapsed, currentPostition, change, duration); break;
-                case SBEasing.Linear:
-                default:
-                    targetPosition = easeLinear(elapsed, currentPostition, change, duration);
-                    break;
-            }
-            servoInstance(servo).setPosition(targetPosition);
-            basic.pause(dt);
-            elapsed = input.runningTime() - start;
+
+        else
+            pins.P0.analogWrite(0)
+    }
+
+    //% blockId=brainbot_headlight_color block="Set headlight color to %color"	
+    //% group="Lights"
+    //% weight=99
+    //% color.defl=255
+    export function HeadlightColor(color: number): void {
+        let red = (color >> 16) & 0xFF;
+        let green = (color >> 8) & 0xFF;
+        let blue = (color >> 0) & 0xFF;
+        let deviceAddress = 0x1;
+        let data: number[] = [0x1, red, green, blue];
+
+        for (let i = 0; i < 4; i++) {
+            pins.i2cWriteNumber(
+                deviceAddress,
+                data[i],
+                NumberFormat.Int8LE,
+                i < 3 ? true : false
+            );
         }
-        servoInstance(servo).setPosition(position);
+
+    }
+
+
+
+
+    //% blockId=brainbot_taillight_color block="Set taillight %direction color to %color"
+    //% group="Lights"
+    //% weight=95
+    //% color.defl=255
+    export function TaillightColor(direction: TurnDirection, color: number): void {
+        let strip: neopixel.Strip = null
+        strip = neopixel.create(DigitalPin.P12, 2, NeoPixelMode.RGB)
+
+        if (direction == TurnDirection.Left)
+            taillightLeftcolor = color;
+        else
+            taillightRightColor = color;
+
+        strip.setPixelColor(0, neopixel.colors(taillightLeftcolor))
+        strip.setPixelColor(1, neopixel.colors(taillightRightColor))
+        strip.show()
+    }
+
+    function packRGB(a: number, b: number, c: number): number {
+        return ((a & 0xFF) << 16) | ((b & 0xFF) << 8) | (c & 0xFF);
     }
 
     /**
-     * Sets the speed of a continuous servo in a arbitrary range from `-100%` to
-     * `100%`. If the connected servo is not continuous, this will not work as
-     * expected.
-     * @param servo Which continuous servo to set the speed to.
-     * @param speed The speed ranging from `-100%` to `100%`.
+     * Converts red, green, blue channels into a RGB color
+     * @param red value of the red channel between 0 and 255. eg: 255
+     * @param green value of the green channel between 0 and 255. eg: 255
+     * @param blue value of the blue channel between 0 and 255. eg: 255
      */
-    //% group="Movement"
-    //% blockId=sb_setContinuousServoSpeed block="set continuous servo %servo speed to %speed\\%"
-    //% servo.shadow=sb_servo
-    //% speed.shadow=speedPicker
-    //% inlineInputMode=inline
-    //% parts=microservo trackArgs=0
-    export function setContinuousServoSpeed(servo: number, speed: number): void {
-        speed = Math.constrain(speed, -100, 100);
-        servoInstance(servo).setSpeed(speed);
+    //% weight=1
+    //% blockId="brainbot_rgb" block="red %red|green %green|blue %blue" 
+    //% group="Lights"	
+    export function rgb(red: number, green: number, blue: number): number {
+        return packRGB(red, green, blue);
     }
 
     /**
-     * Turns a servo off so that no force will be applied and it can be rotated
-     * manually. This saves battery.
-     * @param servo Which servo to turn off.
-     */
-    //% group="Movement"
-    //% blockId=sb_turnOffServo
-    //% block="turn off servo %servo"
-    //% servo.shadow=sb_servo
-    //% inlineInputMode=inline
-    //% parts=microservo trackArgs=0
-    export function turnOffServo(servo: number) {
-        servoInstance(servo).stop();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // RGB LEDs
-    ////////////////////////////////////////////////////////////////////////////
-    let _neo: neopixel.Strip;
-    _neo = neopixel.create(DigitalPin.P8, 2, NeoPixelMode.RGB);
-    _neo.setBrightness(20);
-    _neo.clear();
-    basic.pause(10); // BUG: without this delay, RGB LED A gets green sometimes
-    _neo.show();
-
-    /**
-     * Access the RGB LED instace.
-     */
-    function neoInstance(): neopixel.Strip {
-        return _neo;
-    }
-
-    /**
-     * Sets the color of an individual RGB LED by specifying the amount of
-     * red, green and blue in the color. The amounts range from `0%` to
-     * `100%`.
-     * @param rgbLed Which RGB LED to set the color.
-     * @param red Amount of red in color ranging, from `0%` to `100%`.
-     * @param green Amount of green in color ranging, from `0%` to `100%`.
-     * @param blue Amount of blue in color ranging, from `0%` to `100%`.
-     */
-    //% group="Light"
-    //% blockId="sb_setRgbLedColorRGB"
-    //% block="set RGB LED %rgbLed to red %red\\% green %green\\% blue %blue\\%"
-    //% rgbLed.shadow=sb_rgbLed
-    //% red.min=0 red.max=100 red.defl=100
-    //% green.min=0 green.max=100 green.defl=0
-    //% blue.min=0 blue.max=100 blue.defl=0
-    //% inlineInputMode=inline
-    export function setRgbLedColorRGB(rgbLed: number, red: number, green: number, blue: number): void {
-        red = Math.constrain(red, 0, 100);
-        green = Math.constrain(green, 0, 100);
-        blue = Math.constrain(blue, 0, 100);
-        setRgbLedColor(rgbLed, getHexColorFromRGB(red, green, blue));
-    }
-
-    /**
-     * Sets the color of an individual RGB LED by specifying the amount of
-     * hue, saturation and brightness in the color. The amounts range from
-     * `0%` to `100%`.
-     * @param rgbLed Which RGB LED to set the color.
-     * @param hue Hue of the color, ranging from `0%` to `100%`.
-     * @param saturation Saturation of the color, ranging from `0%` to `100%`.
-     * @param brightness Brightness of the color, ranging from `0%` to `100%`.
-     */
-    //% group="Light"
-    //% blockId="sb_setRgbLedColorHSB"
-    //% block="set RGB LED %rgbLed to hue %hue\\% saturation %saturation\\% brightness %brightness\\%"
-    //% rgbLed.shadow=sb_rgbLed
-    //% hue.min=0 hue.max=100 hue.defl=0
-    //% saturation.min=0 saturation.max=100 saturation.defl=100
-    //% brightness.min=0 brightness.max=100 brightness.defl=100
-    //% inlineInputMode=inline
-    export function setRgbLedColorHSB(rgbLed: number, hue: number, saturation: number, brightness: number): void {
-        hue = Math.constrain(hue, 0, 100);
-        saturation = Math.constrain(saturation, 0, 100);
-        brightness = Math.constrain(brightness, 0, 100);
-        setRgbLedColor(rgbLed, getHexColorFromHSB(hue, saturation, brightness));
-    }
-
-    /**
-     * Sets the color of an individual RGB LED by specifying the color by name.
-     * @param rgbLed Which RGB LED to set the color.
-     * @param color The name of the color from a list of color labels.
-     */
-    //% group="Light"
-    //% blockId="sb_setRgbLedColor"
-    //% block="set RGB LED %rgbLed to %color"
-    //% rgbLed.shadow=sb_rgbLed
-    //% color.shadow=sb_color
-    //% inlineInputMode=inline
-    export function setRgbLedColor(rgbLed: number, color: number): void {
-        neoInstance().setPixelColor(rgbLed, color);
-        control.waitMicros(200);
-        neoInstance().show();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // More
-    ////////////////////////////////////////////////////////////////////////////
-    /**
-     * A label of a RGB LED.
-     * @param label RGB LED label.
-     */
-     //% blockId="sb_rgbLedLabel" block="RGB LED %label"
-     //% advanced=true
-     export function rgbLedLabel(label: SBRgbLed): number {
-         return label;
-     }
-    //% blockId="sb_rgbLed" block="%label"
-    //% blockHidden=true
-    export function rgbLed(label: SBRgbLed): number {
-        return label;
-    }
-
-
-    /**
-     * A label of a servo.
-     * @param label Servo label.
-     */
-     //% blockId="sb_servoLabel" block="servo %label"
-     //% advanced=true
-     export function servoLabel(label: SBServo): number {
-         return label;
-     }
-    //% blockId="sb_servo" block="%label"
-    //% blockHidden=true
-    export function servo(label: SBServo): number {
-        return label;
-    }
-
-    /**
-     * A label of a color.
-     * @param label Color label.
-     */
-     //% blockId="sb_colorLabel" block="color %label"
-     //% advanced=true
-     export function colorLabel(label: SBColor): number {
-         return label;
-     }
-    //% blockId="sb_color" block="%label"
-    //% blockHidden=true
-    export function color(label: SBColor): number {
-        return label;
-    }
-
-    /**
-     * A label of a wave type.
-     * @param label Wave type label.
-     */
-     //% blockId="sb_waveTypeLabel" block="wave type %label"
-     //% advanced=true
-     export function waveTypeLabel(label: SBWaveType): number {
-         return label;
-     }
-    //% blockId="sb_waveType" block="%label"
-    //% blockHidden=true
-    export function waveType(label: SBWaveType): number {
-        return label;
-    }
-
-    /**
-    * A label of an easing function.
-    * @param label Easing function label.
+     * Gets the RGB value of a known color
     */
-    //% blockId="sb_easingLabel" block="easing function %label"
-    //% advanced=true
-    //% blockGap=32
-    export function easingLabel(label: SBEasing): number {
-        return label;
-    }
-    //% blockId="sb_easing" block="%label"
-    //% blockHidden=true
-    export function easing(label: SBEasing): number {
-        return label;
+    //% weight=2 blockGap=8
+    //% blockId="brainbot_colors" block="%color" 
+    //% group="Lights"	
+    export function colors(color: NeoPixelColors): number {
+        return color;
     }
 
-    /**
-     * Calculates the hexadecimal representation of a color from the amounts of
-     * `red`, `green` and `blue` in that the color.
-     * @param red Amount of red in color ranging from `0%` to `100%`
-     * @param green Amount of green in color ranging from `0%` to `100%`
-     * @param blue Amount of blue in color ranging from `0%` to `100%`
-     */
-    //% blockId="sb_getHexColorFromRGB"
-    //% block="red %red\\% green %green\\% blue %blue\\%"
-    //% red.min=0 red.max=100 red.defl=0
-    //% green.min=0 green.max=100 green.defl=0
-    //% blue.min=0 blue.max=100 blue.defl=0
-    //% inlineInputMode=inline
-    //% advanced=true
-    export function getHexColorFromRGB(red: number, green: number, blue: number): number {
-        return ((((red / 100) * 255) & 0xFF) << 16) | ((((green / 100) * 255) & 0xFF) << 8) | (((blue / 100) * 255) & 0xFF);
-    }
 
     /**
-     * Calculates the hexadecimal representation of a color from the `hue`,
-     * `saturation` and `brightness` of that the color.
-     * @param hue Hue of the color ranging from `0` to `100`
-     * @param saturation Saturation of the color ranging from `0` to `100`
-     * @param brightness Brightness of the color ranging from `0` to `100`
-     */
-    //% blockId="sb_getHexColorFromHSB"
-    //% block="hue %hue\\% saturation %saturation\\% brightness %brightness\\%"
-    //% hue.min=0 hue.max=100
-    //% saturation.min=0 saturation.max=100
-    //% brightness.min=0 brightness.max=100
-    //% inlineInputMode=inline
-    //% advanced=true
-    export function getHexColorFromHSB(hue: number, saturation: number, brightness: number): number {
-        let h, s, v, r, g, b, i, f, p, q, t;
-        h = hue / 100;
-        s = saturation / 100;
-        v = brightness / 100;
-        i = Math.floor(h * 6);
-        f = h * 6 - i;
-        p = v * (1 - s);
-        q = v * (1 - f * s);
-        t = v * (1 - (1 - f) * s);
-        switch (i % 6) {
-            case 0: r = v, g = t, b = p; break;
-            case 1: r = q, g = v, b = p; break;
-            case 2: r = p, g = v, b = t; break;
-            case 3: r = p, g = q, b = v; break;
-            case 4: r = t, g = p, b = v; break;
-            case 5: r = v, g = p, b = q; break;
-        }
-        return getHexColorFromRGB(r * 100, g * 100, b * 100);
-    }
-    /**
-     * Samples the vale of a periodic wave function. The wave starts at the
-     * beginning of the running time. It can be configured by specifying it's
-     * length (in seconds), amplitude and offset.
-     * @param waveType The type of the wave.
-     * @param length The length (or period) of the wave, in seconds.
-     * @param amplitude The amplitude of the wave.
-     * @param offset The offset of the wave.
-     */
-    //% blockId="sb_wave"
-    //% block="wave type %waveType length %length seconds amplitude %amplitude offset %offset"
-    //% waveType.shadow=sb_waveType
-    //% length.defl=1
-    //% inlineInputMode=inline
-    //% advanced=true
-    export function wave(waveType: number, length: number, amplitude: number, offset: number): number {
-        let time = (input.runningTime() / 1000) % length;
-        let progress = (time / length);
-        let result
-        switch (waveType) {
-            case SBWaveType.Sine:
-                result = Math.sin(progress * (Math.PI * 2));
-                break;
-            case SBWaveType.Cosine:
-                result = Math.cos(progress * (Math.PI * 2));
-                break;
-            case SBWaveType.Triangular:
-                result = 4 * (0.5 - Math.abs(progress % (2 * 0.5) - 0.5)) - 1;
-                break;
-            case SBWaveType.RampUp:
-                result = progress * 2 - 1;
-                break;
-            case SBWaveType.RampDown:
-                result = (progress * 2 - 1) * -1;
-                break;
-            case SBWaveType.Square:
-                result = progress < 0.5 ? 1 : -1;
-                break;
-            case SBWaveType.Pulse:
-                result = progress < 0.1 ? 1 : -1;
-                break;
-        }
-        return result * (amplitude * 0.5) + offset;
-    }
-    /*
-    *
-    * TERMS OF USE - EASING EQUATIONS
-    *
-    * Open source under the BSD License.
-    *
-    * Copyright © 2001 Robert Penner
-    * All rights reserved.
-    *
-    * Redistribution and use in source and binary forms, with or without modification,
-    * are permitted provided that the following conditions are met:
-    *
-    * Redistributions of source code must retain the above copyright notice, this list of
-    * conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright notice, this list
-    * of conditions and the following disclaimer in the documentation and/or other materials
-    * provided with the distribution.
-    *
-    * Neither the name of the author nor the names of contributors may be used to endorse
-    * or promote products derived from this software without specific prior written permission.
-    *
-    * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
-    * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-    * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-    *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-    *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
-    * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-    *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-    * OF THE POSSIBILITY OF SUCH DAMAGE.
-    *
+    * Line tracking sensor event function
     */
-    // t: current time, b: begInnIng value, c: change In value, d: duration
-    export function easeLinear(t: number, b: number, c: number, d: number): number {
-        return c * (t / d) + b;
+    //% weight=2
+    //% blockId=brainbot_gndsensor_event block="on|%direction line tracking sensor|%vi"
+    //% group="Sensors"
+    export function onGroundSensorEvent(direction: TurnDirection, vi: Voltage, a: Action) {
+        let state = direction + vi;
+        let item: IActionVector = { _key: state, _oldkey: 0, _action: a };
+        groundSensorCallback.push(item);
     }
-    export function easeQuadIn(t: number, b: number, c: number, d: number): number {
-        return c * (t /= d) * t + b;
-    }
-    export function easeQuadOut(t: number, b: number, c: number, d: number): number {
-        return -c * (t /= d) * (t - 2) + b;
-    }
-    export function easeQuadInOut(t: number, b: number, c: number, d: number): number {
-        if ((t /= d / 2) < 1) return c / 2 * t * t + b;
-        return -c / 2 * ((--t) * (t - 2) - 1) + b;
-    }
-    export function easeCubicIn(t: number, b: number, c: number, d: number): number {
-        return c * (t /= d) * t * t + b;
-    }
-    export function easeCubicOut(t: number, b: number, c: number, d: number): number {
-        return c * ((t = t / d - 1) * t * t + 1) + b;
-    }
-    export function easeCubicInOut(t: number, b: number, c: number, d: number): number {
-        if ((t /= d / 2) < 1) return c / 2 * t * t * t + b;
-        return c / 2 * ((t -= 2) * t * t + 2) + b;
-    }
-    export function easeQuartIn(t: number, b: number, c: number, d: number): number {
-        return c * (t /= d) * t * t * t + b;
-    }
-    export function easeQuartOut(t: number, b: number, c: number, d: number): number {
-        return -c * ((t = t / d - 1) * t * t * t - 1) + b;
-    }
-    export function easeQuartInOut(t: number, b: number, c: number, d: number): number {
-        if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
-        return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
-    }
-    export function easeQuintIn(t: number, b: number, c: number, d: number): number {
-        return c * (t /= d) * t * t * t * t + b;
-    }
-    export function easeQuintOut(t: number, b: number, c: number, d: number): number {
-        return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
-    }
-    export function easeQuintInOut(t: number, b: number, c: number, d: number): number {
-        if ((t /= d / 2) < 1) return c / 2 * t * t * t * t * t + b;
-        return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
-    }
-    export function easeSineIn(t: number, b: number, c: number, d: number): number {
-        return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
-    }
-    export function easeSineOut(t: number, b: number, c: number, d: number): number {
-        return c * Math.sin(t / d * (Math.PI / 2)) + b;
-    }
-    export function easeSineInOut(t: number, b: number, c: number, d: number): number {
-        return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
-    }
-    export function easeExpoIn(t: number, b: number, c: number, d: number): number {
-        return (t == 0) ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
-    }
-    export function easeExpoOut(t: number, b: number, c: number, d: number): number {
-        return (t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
-    }
-    export function easeExpoInOut(t: number, b: number, c: number, d: number): number {
-        if (t == 0) return b;
-        if (t == d) return b + c;
-        if ((t /= d / 2) < 1) return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
-        return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
-    }
-    export function easeCircIn(t: number, b: number, c: number, d: number): number {
-        return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
-    }
-    export function easeCircOut(t: number, b: number, c: number, d: number): number {
-        return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
-    }
-    export function easeCircInOut(t: number, b: number, c: number, d: number): number {
-        if ((t /= d / 2) < 1) return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
-        return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
-    }
-    export function easeElasticIn(t: number, b: number, c: number, d: number): number {
-        if (t == 0) return b;
-        if ((t /= d) == 1) return b + c;
-        let p = d * .3;
-        let a = c;
-        let s = p / 4;
-        let postFix = a * Math.pow(2, 10 * (t -= 1));
-        return -(postFix * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
-    }
-    export function easeElasticOut(t: number, b: number, c: number, d: number): number {
-        if (t == 0) return b;
-        if ((t /= d) == 1) return b + c;
-        let p = d * .3;
-        let a = c;
-        let s = p / 4;
-        return (a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b);
-    }
-    export function easeElasticInOut(t: number, b: number, c: number, d: number): number {
-        if (t == 0) return b;
-        if ((t /= d / 2) == 2) return b + c;
-        let p = d * (.3 * 1.5);
-        let a = c;
-        let s = p / 4;
-        if (t < 1) {
-            let postFix = a * Math.pow(2, 10 * (t -= 1)); // postIncrement is evil
-            return -.5 * (postFix * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+
+    let groundSensorValue: number
+    let groundSensorScanIdx: number = 1;
+    function GetGroundSensorState(): number {
+        switch (groundSensorScanIdx) {
+            case 1: groundSensorValue = pins.digitalReadPin(DigitalPin.P13) == 0 ? state.state1 : 0; break;
+            case 2: groundSensorValue = pins.digitalReadPin(DigitalPin.P13) == 1 ? state.state2 : 0; break;
+            case 3: groundSensorValue = pins.digitalReadPin(DigitalPin.P14) == 0 ? state.state3 : 0; break;
+            case 4: groundSensorValue = pins.digitalReadPin(DigitalPin.P14) == 1 ? state.state4 : 0; break;
+
         }
-        let postFix = a * Math.pow(2, -10 * (t -= 1)); // postIncrement is evil
-        return postFix * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
+        groundSensorScanIdx += 1;
+        if (groundSensorScanIdx == 5) groundSensorScanIdx = 1;
+
+        return groundSensorValue;
     }
-    export function easeBackIn(t: number, b: number, c: number, d: number): number {
-        let s = 1.70158;
-        return c * (t /= d) * t * ((s + 1) * t - s) + b;
-    }
-    export function easeBackOut(t: number, b: number, c: number, d: number): number {
-        let s = 1.70158;
-        return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
-    }
-    export function easeBackInOut(t: number, b: number, c: number, d: number): number {
-        let s = 1.70158;
-        if ((t /= d / 2) < 1) return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
-        return c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b;
-    }
-    export function easeBounceIn(t: number, b: number, c: number, d: number): number {
-        return c - easeBounceOut(d - t, 0, c, d) + b;
-    }
-    export function easeBounceOut(t: number, b: number, c: number, d: number): number {
-        if ((t /= d) < (1 / 2.75)) {
-            return c * (7.5625 * t * t) + b;
-        } else if (t < (2 / 2.75)) {
-            return c * (7.5625 * (t -= (1.5 / 2.75)) * t + .75) + b;
-        } else if (t < (2.5 / 2.75)) {
-            return c * (7.5625 * (t -= (2.25 / 2.75)) * t + .9375) + b;
-        } else {
-            return c * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375) + b;
+
+
+    /**
+     * Ground sensor detected
+    */
+    //% weight=2 blockGap=8
+    //% blockId="brainbot_groundsensor_detected" block="line detected |%detect" 
+    //% group="Sensors"	
+    export function ReadGroundSensor(detect: GroundSensorDetected): boolean {
+        switch (detect) {
+            case GroundSensorDetected.None:
+                return pins.digitalReadPin(DigitalPin.P13) == 0 && pins.digitalReadPin(DigitalPin.P14) == 0
+
+            case GroundSensorDetected.Right:
+                return pins.digitalReadPin(DigitalPin.P14) > 0 && pins.digitalReadPin(DigitalPin.P13) == 0
+
+            case GroundSensorDetected.Left:
+                return pins.digitalReadPin(DigitalPin.P13) > 0 && pins.digitalReadPin(DigitalPin.P14) == 0
+
+            case GroundSensorDetected.Both:
+                return pins.digitalReadPin(DigitalPin.P13) > 0 && pins.digitalReadPin(DigitalPin.P14) > 0
+
         }
+
+        return false
     }
-    export function easeBounceInOut(t: number, b: number, c: number, d: number): number {
-        if (t < d / 2) return easeBounceIn(t * 2, 0, c, d) * .5 + b;
-        return easeBounceOut(t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+
+
+    //% blockId=brainbot_distancesensor block="read distance"
+    //% group="Sensors"
+    export function ReadDistanceSensor(): number {
+        let distance = sonar.ping(
+            DigitalPin.P16,
+            DigitalPin.P15,
+            PingUnit.Centimeters
+        );
+        return distance;
     }
+
+    let irReceived: number
+    let irKeyCallback: IActionVector[] = []
+    let lastkey: number
+
+    /**
+    * button pushed.
+    */
+    //% blockId=brainbot_infrared received_event
+    //% block="on receiver button |%btn| pressed"
+    //% group="Reciever"
+    //% weight=97
+    export function onPressEvent(btn: IrRemoteButton, body: Action): void {
+        if (init_ir == false) {
+            makerbit.connectIrReceiver(DigitalPin.P8, IrProtocol.NEC)
+
+            init_ir = true
+            irReceived = 0
+
+            makerbit.onIrButton(IrButton.Any, IrButtonAction.Pressed, function () {
+                irReceived = 1
+            })
+        }
+
+        let bt = btn as number
+        let item: IActionVector = { _key: bt, _oldkey: bt, _action: body };
+
+        irKeyCallback.push(item)
+    }
+
+
+    //% blockId=brainbot_read_infrared block="read last infrared key"
+    //% group="Reciever"
+    //% weight=99
+    export function ReadLastKey(): number {
+        if (init_ir == false) {
+            makerbit.connectIrReceiver(DigitalPin.P8, IrProtocol.NEC)
+
+            init_ir = true
+            irReceived = 0
+
+            makerbit.onIrButton(IrButton.Any, IrButtonAction.Pressed, function () {
+                irReceived = 1
+            })
+        }
+
+        return lastkey;
+    }
+
+
+    function GetIrKey(): number {
+        if (irReceived == 0) {
+            return 100;
+        }
+
+        irReceived = 0 // reset
+
+        let key = makerbit.irButton();
+        let keyConvert = 100;
+
+        switch (key) {
+            case 0: // power on
+                keyConvert = 0;
+                break
+            case 128: // up
+                keyConvert = 1;
+                break
+            case 64: // power off
+                keyConvert = 2;
+                break
+            case 32: // left
+                keyConvert = 2;
+                break
+            case 160: // center
+                keyConvert = 5;
+                break
+            case 96: // right
+                keyConvert = 6;
+                break
+            case 16: // back
+                keyConvert = 8;
+                break
+            case 144: // down
+                keyConvert = 9;
+                break
+            case 80: // next
+                keyConvert = 10;
+                break
+            case 48: // +
+                keyConvert = 12;
+                break
+            case 176: // 0
+                keyConvert = 13;
+                break
+            case 112: // -
+                keyConvert = 14;
+                break
+            case 8: // 1
+                keyConvert = 16;
+                break
+            case 136: // 2
+                keyConvert = 17;
+                break
+            case 72: // 3
+                keyConvert = 18;
+                break
+            case 40: // 4
+                keyConvert = 20;
+                break
+            case 168: // 5
+                keyConvert = 21;
+                break
+            case 104: // 6
+                keyConvert = 22;
+                break
+            case 24: // 7
+                keyConvert = 24;
+                break
+            case 152: // 8
+                keyConvert = 25;
+                break
+            case 88: // 9
+                keyConvert = 26;
+                break
+        }
+
+        lastkey = keyConvert;
+        return keyConvert;
+    }
+
+    forever(() => {
+        if (groundSensorCallback != null) {
+            let sta = GetGroundSensorState();
+            if (sta != 0) {
+                for (let item of groundSensorCallback) {
+                    if (item._key == sta /*&& item._key != item._oldkey*/) {
+                        item._action();
+                    }
+
+                    //if ((item._key && 0x30) == (item._oldkey && 0x30))
+                    //    item._oldkey = item._key
+                }
+            }
+        }
+
+        if (irKeyCallback != null) {
+            let key = GetIrKey();
+
+            if (key != 100) {
+                for (let item of irKeyCallback) {
+                    if (item._key == key) {
+                        item._action();
+                    }
+                }
+            }
+
+
+        }
+        pause(25);
+    })
+
+
 }
