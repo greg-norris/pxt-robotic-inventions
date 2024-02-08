@@ -1,7 +1,7 @@
 {
     "name": "Strawbees Robotic Inventions",
     "version": "0.1.26",
-    "description": "Strawbees Robotic Inventions for the micro:bit",
+    "description": "Strawbees Robotic Inventions for the BrainPad Pulse",
     "dependencies": {
         "core": "*",
         "servo": "*",
